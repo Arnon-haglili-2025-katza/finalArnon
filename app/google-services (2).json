@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349870934584",
+    "project_id": "arnonfinalhta",
+    "storage_bucket": "arnonfinalhta.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349870934584:android:5f4078637a042dc65d34cd",
+        "android_client_info": {
+          "package_name": "com.example.arnonfinalhta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMGlGuIhxZioT3HnDrv0rPTjRVuYVXHJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,20 +1,27 @@
 package com.example.arnonfinalhta;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,22 +51,45 @@ public class RegisterActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.btnRegister);
         Button btnBack = findViewById(R.id.btnBack);
 
+        // Set up Gender Spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.gender_array,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spGender.setAdapter(adapter);
+
+        // Date Picker for BirthDate
+        etBirthDate.setOnClickListener(v -> showDatePickerDialog());
+
         btnRegister.setOnClickListener(v -> registerUser());
-        btnBack.setOnClickListener(v -> {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        });
+
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this, (view, year1, monthOfYear, dayOfMonth) ->
+                etBirthDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1),
+                year, month, day);
+        datePickerDialog.show();
     }
 
     private void registerUser() {
         String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
-        String confirmPassword = etPasswordConfirm.getText().toString().trim();
+        String password = etPassword.getText().toString();
+        String confirmPassword = etPasswordConfirm.getText().toString();
         String birthDate = etBirthDate.getText().toString().trim();
         String gender = spGender.getSelectedItem().toString();
 
         if (TextUtils.isEmpty(email)) {
-            etEmail.setError("חובה להזין אימייל");
+            etEmail.setError("שדה חובה");
             return;
         }
         if (TextUtils.isEmpty(password) || password.length() < 6) {
@@ -67,38 +97,39 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
         if (!password.equals(confirmPassword)) {
-            etPasswordConfirm.setError("הסיסמאות אינן תואמות");
+            etPasswordConfirm.setError("סיסמאות לא תואמות");
             return;
         }
         if (TextUtils.isEmpty(birthDate)) {
-            etBirthDate.setError("נא להזין תאריך לידה");
+            etBirthDate.setError("בחר תאריך לידה");
             return;
         }
 
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+                .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
+
                     if (task.isSuccessful()) {
-                        String uid = mAuth.getCurrentUser().getUid();
+                        String userId = mAuth.getCurrentUser().getUid();
 
                         Map<String, Object> user = new HashMap<>();
                         user.put("email", email);
-                        user.put("gender", gender);
                         user.put("birthDate", birthDate);
+                        user.put("gender", gender);
 
-                        db.collection("users").document(uid)
+                        db.collection("users").document(userId)
                                 .set(user)
-                                .addOnSuccessListener(aVoid -> {
+                                .addOnSuccessListener(unused -> {
                                     Toast.makeText(this, "נרשמת בהצלחה!", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(this, MainActivity.class));
                                     finish();
                                 })
                                 .addOnFailureListener(e ->
-                                        Toast.makeText(this, "שגיאה בשמירת הנתונים", Toast.LENGTH_SHORT).show());
+                                        Toast.makeText(this, "שגיאה בשמירת פרטי המשתמש", Toast.LENGTH_SHORT).show()
+                                );
                     } else {
-                        Toast.makeText(this, "שגיאה בהרשמה: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "הרשמה נכשלה: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }

@@ -8,7 +8,7 @@
     android:background="#FFF8F8"
     android:padding="16dp">
 
-    <!-- כותרת עליונה -->
+    <!-- כותרת ראשית -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         android:textColor="#D50000"
         android:layout_marginBottom="10dp" />
 
-    <!-- ניווט בין חודשים -->
+    <!-- כפתורי ניווט + חודש -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,8 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_media_previous"
-            app:tint="#D50000" />
+            app:tint="#D50000"
+            android:contentDescription="Previous month" />
 
         <TextView
             android:id="@+id/tvMonthYear"
@@ -49,7 +50,9 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_media_next"
-             app:tint="#D50000" />
+            app:tint="#D50000"
+            android:contentDescription="Next month" />
+
     </LinearLayout>
 
     <!-- לוח השנה -->
@@ -63,7 +66,7 @@
         android:overScrollMode="never"
         android:scrollbars="none" />
 
-    <!-- טקסט מידע על משחק -->
+    <!-- טקסט מידע מתחת ללוח -->
     <TextView
         android:id="@+id/tvMatchDetails"
         android:layout_width="match_parent"

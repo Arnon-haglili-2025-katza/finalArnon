@@ -4,94 +4,121 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 public class MatchesActivity extends AppCompatActivity {
 
-    private TextView tvMatchDetails, tvMonthYear;
+    private TextView tvMonthYear;
     private RecyclerView recyclerViewCalendar;
-    private CalendarAdapter calendarAdapter;
-    private List<String> daysList;
-    private Map<String, String> matchesMap;
+    private ImageButton btnPrevMonth, btnNextMonth;
 
-    private int currentMonth = 11; // נניח נובמבר
-    private int currentYear = 2025;
+    private LocalDate selectedDate;
+    private ArrayList<LocalDate> daysInMonth;
+    private HashMap<String, String> matchesMap;
+    private CalendarAdapter calendarAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matches);
 
-        tvMatchDetails = findViewById(R.id.tvMatchDetails);
+        initViews();
+        initMatches();
+        setMonthView();
+    }
+
+    private void initViews() {
         tvMonthYear = findViewById(R.id.tvMonthYear);
         recyclerViewCalendar = findViewById(R.id.recyclerViewCalendar);
+        btnPrevMonth = findViewById(R.id.btnPrevMonth);
+        btnNextMonth = findViewById(R.id.btnNextMonth);
 
-        ImageButton btnPrevMonth = findViewById(R.id.btnPrevMonth);
-        ImageButton btnNextMonth = findViewById(R.id.btnNextMonth);
+        selectedDate = LocalDate.now();
 
-        // רשימת משחקים לדוגמה
-        matchesMap = new HashMap<>();
-        matchesMap.put("2025-11-01", "הפועל ת״א vs מכבי חיפה\nבלומפילד, 20:30");
-        matchesMap.put("2025-11-05", "הפועל ת״א vs בית״ר ירושלים\nטדי, 21:00");
-        matchesMap.put("2025-11-10", "הפועל ת״א vs מ.ס אשדוד\nבלומפילד, 19:00");
-
-        daysList = new ArrayList<>();
-        generateDaysForMonth(currentYear, currentMonth);
-
-        calendarAdapter = new CalendarAdapter(daysList, matchesMap, (date, matchInfo) -> tvMatchDetails.setText(matchInfo));
         recyclerViewCalendar.setLayoutManager(new GridLayoutManager(this, 7));
+
+        btnPrevMonth.setOnClickListener(v -> prevMonth());
+        btnNextMonth.setOnClickListener(v -> nextMonth());
+    }
+
+    private void initMatches() {
+        matchesMap = new HashMap<>();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("matches");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                matchesMap.clear();
+
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String date = child.getKey();  // yyyy-MM-dd
+
+                    String opponent = child.child("opponent").getValue(String.class);
+                    String location = child.child("location").getValue(String.class);
+                    String time = child.child("time").getValue(String.class);
+
+                    if (opponent != null && location != null && time != null) {
+                        String details = opponent + " – " + location + ", " + time;
+                        matchesMap.put(date, details);
+                    }
+                }
+
+                if (calendarAdapter != null) {
+                    calendarAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+
+    private void setMonthView() {
+        tvMonthYear.setText(selectedDate.getMonth().toString() + " " + selectedDate.getYear());
+        daysInMonth = generateDaysForMonth(selectedDate);
+        calendarAdapter = new CalendarAdapter(this, daysInMonth, matchesMap);
         recyclerViewCalendar.setAdapter(calendarAdapter);
-
-        updateMonthYearText();
-
-        btnPrevMonth.setOnClickListener(v -> {
-            if (currentMonth == 1) {
-                currentMonth = 12;
-                currentYear--;
-            } else {
-                currentMonth--;
-            }
-            generateDaysForMonth(currentYear, currentMonth);
-            calendarAdapter.notifyDataSetChanged();
-            updateMonthYearText();
-        });
-
-        btnNextMonth.setOnClickListener(v -> {
-            if (currentMonth == 12) {
-                currentMonth = 1;
-                currentYear++;
-            } else {
-                currentMonth++;
-            }
-            generateDaysForMonth(currentYear, currentMonth);
-            calendarAdapter.notifyDataSetChanged();
-            updateMonthYearText();
-        });
     }
 
-    private void generateDaysForMonth(int year, int month) {
-        daysList.clear();
-        int daysInMonth;
-        switch (month) {
-            case 2: daysInMonth = 28; break; // לא מתחשב בשנה מעוברת כרגע
-            case 4: case 6: case 9: case 11: daysInMonth = 30; break;
-            default: daysInMonth = 31; break;
+    private ArrayList<LocalDate> generateDaysForMonth(LocalDate date) {
+        ArrayList<LocalDate> days = new ArrayList<>();
+        LocalDate firstOfMonth = date.withDayOfMonth(1);
+        int daysInMonth = date.lengthOfMonth();
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue();
+
+        for (int i = 1; i < dayOfWeek; i++) {
+            days.add(null);
         }
 
-        for (int day = 1; day <= daysInMonth; day++) {
-            String date = String.format("%04d-%02d-%02d", year, month, day);
-            daysList.add(date);
+        for (int i = 1; i <= daysInMonth; i++) {
+            days.add(LocalDate.of(date.getYear(), date.getMonth(), i));
         }
+
+        return days;
     }
 
-    private void updateMonthYearText() {
-        tvMonthYear.setText(String.format("%04d-%02d", currentYear, currentMonth));
+    private void prevMonth() {
+        selectedDate = selectedDate.minusMonths(1);
+        setMonthView();
+    }
+
+    private void nextMonth() {
+        selectedDate = selectedDate.plusMonths(1);
+        setMonthView();
     }
 }

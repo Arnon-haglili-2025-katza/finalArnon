@@ -15,7 +15,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class AiActivity extends AppCompatActivity {
+public class AiActivity extends BaseActivity  {
 
     EditText input;
     TextView output;
@@ -24,7 +24,11 @@ public class AiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ai);
+        setContentView(R.layout.layout_with_bottom_nav);
+        getLayoutInflater().inflate(R.layout.activity_ai,
+                findViewById(R.id.content_container), true);
+        setupBottomNav(R.id.nav_ai);
+
 
         input = findViewById(R.id.inputQuestion);
         output = findViewById(R.id.aiAnswer);

@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-public class MatchesActivity extends AppCompatActivity {
+public class MatchesActivity extends BaseActivity  {
 
     private TextView tvMonthYear;
     private RecyclerView recyclerViewCalendar;
@@ -33,7 +33,10 @@ public class MatchesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_matches);
+        setContentView(R.layout.layout_with_bottom_nav);
+        getLayoutInflater().inflate(R.layout.activity_ai,
+                findViewById(R.id.content_container), true);
+        setupBottomNav(R.id.nav_matches);
 
         initViews();
         initMatches();

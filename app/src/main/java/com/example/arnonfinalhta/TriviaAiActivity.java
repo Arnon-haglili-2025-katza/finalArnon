@@ -14,7 +14,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-public class TriviaAiActivity extends AppCompatActivity {
+public class TriviaAiActivity extends BaseActivity  {
 
     TextView questionText;
     Button option1, option2, option3;
@@ -24,7 +24,10 @@ public class TriviaAiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trivia_ai);
+        setContentView(R.layout.layout_with_bottom_nav);
+        getLayoutInflater().inflate(R.layout.activity_ai,
+                findViewById(R.id.content_container), true);
+        setupBottomNav(R.id.nav_trivia);
 
         questionText = findViewById(R.id.questionText);
         option1 = findViewById(R.id.option1);

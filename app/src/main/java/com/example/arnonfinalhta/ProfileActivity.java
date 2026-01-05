@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity  {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -20,7 +20,10 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.layout_with_bottom_nav);
+        getLayoutInflater().inflate(R.layout.activity_ai,
+                findViewById(R.id.content_container), true);
+        setupBottomNav(R.id.nav_profile);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);

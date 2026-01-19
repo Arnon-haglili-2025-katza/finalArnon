@@ -1,57 +1,24 @@
 package com.example.arnonfinalhta;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-public class MainActivity extends BaseActivity  {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+
+        // layout עם התפריט התחתון
         setContentView(R.layout.layout_with_bottom_nav);
-        getLayoutInflater().inflate(R.layout.activity_ai,
-                findViewById(R.id.content_container), true);
+
+        // טעינת התוכן של הדף הראשי
+        getLayoutInflater().inflate(
+                R.layout.activity_main,
+                findViewById(R.id.content_container),
+                true
+        );
+
+        // סימון "בית" בתפריט
         setupBottomNav(R.id.nav_home);
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_home) {
-                startActivity(new Intent(this, MainActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            }
-            else if (id == R.id.nav_matches) {
-                startActivity(new Intent(this, MatchesActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            }
-            else if (id == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-                overridePendingTransition(0, 0);
-                return true;
-            }
-
-            return false;
-        });
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 }

@@ -19,15 +19,23 @@ public class BaseActivity extends AppCompatActivity {
 
             if (id == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
+
             } else if (id == R.id.nav_matches) {
                 startActivity(new Intent(this, MatchesActivity.class));
+
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
+
             } else if (id == R.id.nav_ai) {
-                if (!(this instanceof AiActivity))
+                if (!(this instanceof AiActivity)) {
                     startActivity(new Intent(this, AiActivity.class));
-            } else if (id == R.id.nav_trivia) {
-                startActivity(new Intent(this, TriviaAiActivity.class));
+                }
+
+
+            } else if (id == R.id.nav_news) {
+                if (!(this instanceof NewsActivity)) {
+                    startActivity(new Intent(this, NewsActivity.class));
+                }
             }
 
             overridePendingTransition(0, 0);

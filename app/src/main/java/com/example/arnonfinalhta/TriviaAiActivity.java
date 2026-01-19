@@ -21,21 +21,7 @@ public class TriviaAiActivity extends BaseActivity  {
     String correctAnswer;
     RequestQueue queue;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_with_bottom_nav);
-        getLayoutInflater().inflate(R.layout.activity_ai,
-                findViewById(R.id.content_container), true);
-        setupBottomNav(R.id.nav_trivia);
 
-        questionText = findViewById(R.id.questionText);
-        option1 = findViewById(R.id.option1);
-        option2 = findViewById(R.id.option2);
-        option3 = findViewById(R.id.option3);
-
-        queue = Volley.newRequestQueue(this);
-    }
 
     public void getNewQuestion(View view) {
         String url = "https://api.openai.com/v1/chat/completions";

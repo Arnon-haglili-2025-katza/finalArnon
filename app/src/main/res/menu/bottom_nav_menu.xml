@@ -21,9 +21,10 @@
         android:icon="@drawable/ic_ai"
         />
 
+
+
     <item
-        android:id="@+id/nav_trivia"
-        android:title="טריוויה"
-        android:icon="@drawable/ic_trivia"
+        android:id="@+id/nav_news"
+        android:title="חדשות"
         />
 </menu>

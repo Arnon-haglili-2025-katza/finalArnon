@@ -5,4 +5,5 @@ public class NewsItem {
     public String description;
     public String imageUrl;
     public String date;
+    public String url;
 }

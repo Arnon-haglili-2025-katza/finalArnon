@@ -28,8 +28,10 @@ public class NewsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // טוען את ה־layout עם התפריט
         setContentView(R.layout.layout_with_bottom_nav);
 
+        // מכניס את תוכן הניוז לתוך ה־FrameLayout
         getLayoutInflater().inflate(
                 R.layout.activity_news,
                 findViewById(R.id.content_container),
@@ -74,6 +76,7 @@ public class NewsActivity extends BaseActivity {
                             item.description = a.optString("description");
                             item.imageUrl = a.optString("urlToImage");
                             item.date = a.optString("publishedAt");
+                            item.url = a.optString("url"); // ⭐ חשוב
 
                             newsList.add(item);
                         }

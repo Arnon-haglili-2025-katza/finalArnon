@@ -1,5 +1,8 @@
 package com.example.arnonfinalhta;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,52 +12,61 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
-    private ArrayList<NewsItem> newsList;
+    ArrayList<NewsItem> list;
 
-    public NewsAdapter(ArrayList<NewsItem> newsList) {
-        this.newsList = newsList;
+    public NewsAdapter(ArrayList<NewsItem> list) {
+        this.list = list;
     }
 
     @NonNull
     @Override
     public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_news, parent, false);
-        return new NewsViewHolder(view);
+        return new NewsViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        NewsItem item = newsList.get(position);
+        NewsItem item = list.get(position);
 
-        holder.tvTitle.setText(item.title);
-        holder.tvDescription.setText(item.description);
-        holder.tvDate.setText(item.date);
+        holder.title.setText(item.title);
+        holder.desc.setText(item.description);
+        holder.date.setText(item.date);
 
-        // תמונה נוסיף בהמשך (עם Glide)
+        Glide.with(holder.itemView.getContext())
+                .load(item.imageUrl)
+                .centerCrop()
+                .into(holder.image);
+
+        holder.itemView.setOnClickListener(v -> {
+            Context c = v.getContext();
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
+            c.startActivity(i);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return newsList.size();
+        return list.size();
     }
 
     static class NewsViewHolder extends RecyclerView.ViewHolder {
-
-        TextView tvTitle, tvDescription, tvDate;
-        ImageView imgNews;
+        ImageView image;
+        TextView title, desc, date;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            imgNews = itemView.findViewById(R.id.imgNews);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
-            tvDate = itemView.findViewById(R.id.tvDate);
+            image = itemView.findViewById(R.id.imgNews);
+            title = itemView.findViewById(R.id.txtTitle);
+            desc = itemView.findViewById(R.id.txtDescription);
+            date = itemView.findViewById(R.id.txtDate);
         }
     }
 }

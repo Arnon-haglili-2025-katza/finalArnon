@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_home"
-        android:title="בית"
-        android:icon="@drawable/ic_home" />
+        android:icon="@drawable/ic_home"
+        android:title="בית" />
 
     <item
         android:id="@+id/nav_matches"
-        android:title="משחקים"
-        android:icon="@drawable/ic_sports_soccer" />
+        android:icon="@drawable/ic_sports_soccer"
+        android:title="משחקים" />
 
     <item
         android:id="@+id/nav_profile"
-        android:title="פרופיל"
-        android:icon="@drawable/ic_person" />
+        android:icon="@drawable/ic_person"
+        android:title="פרופיל" />
 
     <item
         android:id="@+id/nav_ai"
-        android:title="AI"
         android:icon="@drawable/ic_ai"
-        />
+        android:title="AI" />
 
-
+    <item
+        android:id="@+id/nav_trivia"
+        android:icon="@drawable/ic_trivia"
+        android:title="חידון" />
 
     <item
         android:id="@+id/nav_news"
-        android:title="חדשות"
-        />
+        android:title="חדשות" />
+
 </menu>

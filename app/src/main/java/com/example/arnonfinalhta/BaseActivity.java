@@ -1,7 +1,6 @@
 package com.example.arnonfinalhta;
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,35 +9,36 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class BaseActivity extends AppCompatActivity {
 
     protected void setupBottomNav(int selectedItemId) {
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        if (bottomNav == null) return;
 
         bottomNav.setSelectedItemId(selectedItemId);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
+            Intent intent = null;
+
             if (id == R.id.nav_home) {
-                startActivity(new Intent(this, MainActivity.class));
-
+                intent = new Intent(this, MainActivity.class);
             } else if (id == R.id.nav_matches) {
-                startActivity(new Intent(this, MatchesActivity.class));
-
+                intent = new Intent(this, MatchesActivity.class);
             } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-
+                intent = new Intent(this, ProfileActivity.class);
             } else if (id == R.id.nav_ai) {
-                if (!(this instanceof AiActivity)) {
-                    startActivity(new Intent(this, AiActivity.class));
-                }
-
-
+                intent = new Intent(this, AiActivity.class);
+            } else if (id == R.id.nav_trivia) {
+                intent = new Intent(this, TriviaAiActivity.class);
             } else if (id == R.id.nav_news) {
-                if (!(this instanceof NewsActivity)) {
-                    startActivity(new Intent(this, NewsActivity.class));
-                }
+                intent = new Intent(this, NewsActivity.class);
             }
 
-            overridePendingTransition(0, 0);
+            if (intent != null) {
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+
             return true;
         });
     }

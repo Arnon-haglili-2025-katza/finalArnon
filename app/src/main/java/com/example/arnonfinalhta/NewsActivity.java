@@ -2,6 +2,7 @@ package com.example.arnonfinalhta;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,9 +16,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class NewsActivity extends BaseActivity {
+public class NewsActivity extends AppCompatActivity {
 
-    private static final String NEWS_API_KEY = "8b28a7cc55494538a188fc245645fa39";
+    private static final String API_KEY = "8b28a7cc55494538a188fc245645fa39";
 
     RecyclerView recyclerView;
     ArrayList<NewsItem> newsList;
@@ -27,24 +28,13 @@ public class NewsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // טוען את ה־layout עם התפריט
-        setContentView(R.layout.layout_with_bottom_nav);
-
-        // מכניס את תוכן הניוז לתוך ה־FrameLayout
-        getLayoutInflater().inflate(
-                R.layout.activity_news,
-                findViewById(R.id.content_container),
-                true
-        );
-
-        setupBottomNav(R.id.nav_news);
+        setContentView(R.layout.activity_news);
 
         recyclerView = findViewById(R.id.recyclerNews);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         newsList = new ArrayList<>();
-        adapter = new NewsAdapter(newsList);
+        adapter = new NewsAdapter(this, newsList);
         recyclerView.setAdapter(adapter);
 
         queue = Volley.newRequestQueue(this);
@@ -55,9 +45,8 @@ public class NewsActivity extends BaseActivity {
     private void loadNews() {
         String url = "https://newsapi.org/v2/everything"
                 + "?q=Hapoel Tel Aviv"
-                + "&language=he"
                 + "&sortBy=publishedAt"
-                + "&apiKey=" + NEWS_API_KEY;
+                + "&apiKey=" + API_KEY;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -71,14 +60,13 @@ public class NewsActivity extends BaseActivity {
                         for (int i = 0; i < articles.length(); i++) {
                             JSONObject a = articles.getJSONObject(i);
 
-                            NewsItem item = new NewsItem();
-                            item.title = a.optString("title");
-                            item.description = a.optString("description");
-                            item.imageUrl = a.optString("urlToImage");
-                            item.date = a.optString("publishedAt");
-                            item.url = a.optString("url"); // ⭐ חשוב
+                            String title = a.optString("title");
+                            String description = a.optString("description");
+                            String link = a.optString("url");
 
-                            newsList.add(item);
+                            if (title != null && link != null) {
+                                newsList.add(new NewsItem(title, description, link));
+                            }
                         }
 
                         adapter.notifyDataSetChanged();

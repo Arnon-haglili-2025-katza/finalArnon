@@ -6,67 +6,57 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
+import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
-    ArrayList<NewsItem> list;
+    private final Context context;
+    private final List<NewsItem> newsList;
 
-    public NewsAdapter(ArrayList<NewsItem> list) {
-        this.list = list;
+    public NewsAdapter(Context context, List<NewsItem> newsList) {
+        this.context = context;
+        this.newsList = newsList;
     }
 
     @NonNull
     @Override
     public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
+        View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_news, parent, false);
-        return new NewsViewHolder(v);
+        return new NewsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        NewsItem item = list.get(position);
+        NewsItem item = newsList.get(position);
 
         holder.title.setText(item.title);
-        holder.desc.setText(item.description);
-        holder.date.setText(item.date);
-
-        Glide.with(holder.itemView.getContext())
-                .load(item.imageUrl)
-                .centerCrop()
-                .into(holder.image);
+        holder.description.setText(item.description);
 
         holder.itemView.setOnClickListener(v -> {
-            Context c = v.getContext();
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
-            c.startActivity(i);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
+            context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return newsList.size();
     }
 
     static class NewsViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView title, desc, date;
+
+        TextView title, description;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.imgNews);
-            title = itemView.findViewById(R.id.txtTitle);
-            desc = itemView.findViewById(R.id.txtDescription);
-            date = itemView.findViewById(R.id.txtDate);
+            title = itemView.findViewById(R.id.title);
+            description = itemView.findViewById(R.id.description);
         }
     }
 }

@@ -24,7 +24,6 @@ public class NewsActivity extends BaseActivity {
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
-
     ArrayList<NewsItem> newsList;
     NewsAdapter adapter;
     RequestQueue queue;
@@ -33,12 +32,10 @@ public class NewsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // הלייאאוט הראשי עם הבוטום נאב
+        // Layout עם Bottom Nav
         setContentView(R.layout.layout_with_bottom_nav);
 
-        FrameLayout frame = findViewById(R.id.content_frame);
-
-        // טוען את הלייאאוט של החדשות
+        FrameLayout frame = findViewById(R.id.content_container);
         View view = getLayoutInflater().inflate(R.layout.activity_news, frame, false);
         frame.addView(view);
 
@@ -48,7 +45,6 @@ public class NewsActivity extends BaseActivity {
         progressBar = view.findViewById(R.id.progressBar);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         newsList = new ArrayList<>();
         adapter = new NewsAdapter(this, newsList);
         recyclerView.setAdapter(adapter);
@@ -59,48 +55,35 @@ public class NewsActivity extends BaseActivity {
     }
 
     private void loadNews() {
-
         progressBar.setVisibility(View.VISIBLE);
 
-        String url =
-                "https://newsapi.org/v2/everything?q=הפועל תל אביב&language=he&sortBy=publishedAt&apiKey="
-                        + API_KEY;
+        String url = "https://newsapi.org/v2/everything?q=הפועל תל אביב&language=he&sortBy=publishedAt&apiKey=" + API_KEY;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
-
                 response -> {
-
                     progressBar.setVisibility(View.GONE);
-
                     try {
-
                         JSONArray articles = response.getJSONArray("articles");
                         newsList.clear();
 
                         for (int i = 0; i < articles.length(); i++) {
-
                             JSONObject article = articles.getJSONObject(i);
-
                             newsList.add(new NewsItem(
                                     article.optString("title"),
                                     article.optString("description"),
                                     article.optString("url"),
                                     article.optString("urlToImage")
-
                             ));
                         }
 
                         adapter.notifyDataSetChanged();
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                 },
-
                 error -> {
                     progressBar.setVisibility(View.GONE);
                     error.printStackTrace();

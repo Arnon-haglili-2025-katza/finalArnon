@@ -2,21 +2,12 @@ package com.example.arnonfinalhta;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import androidx.recyclerview.widget.*;
+import com.android.volley.*;
+import com.android.volley.toolbox.*;
+import org.json.*;
+import java.util.*;
 
 public class NewsActivity extends BaseActivity {
 
@@ -24,6 +15,7 @@ public class NewsActivity extends BaseActivity {
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
+
     ArrayList<NewsItem> newsList;
     NewsAdapter adapter;
     RequestQueue queue;
@@ -32,19 +24,15 @@ public class NewsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Layout עם Bottom Nav
         setContentView(R.layout.layout_with_bottom_nav);
-
-        FrameLayout frame = findViewById(R.id.content_container);
-        View view = getLayoutInflater().inflate(R.layout.activity_news, frame, false);
-        frame.addView(view);
-
         setupBottomNav(R.id.nav_news);
 
-        recyclerView = view.findViewById(R.id.recyclerNews);
-        progressBar = view.findViewById(R.id.progressBar);
+        recyclerView = findViewById(R.id.recyclerNews);
+        progressBar = findViewById(R.id.progressBar);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
         newsList = new ArrayList<>();
         adapter = new NewsAdapter(this, newsList);
         recyclerView.setAdapter(adapter);
@@ -55,24 +43,32 @@ public class NewsActivity extends BaseActivity {
     }
 
     private void loadNews() {
+
         progressBar.setVisibility(View.VISIBLE);
 
-        String url = "https://newsapi.org/v2/everything?q=הפועל תל אביב&language=he&sortBy=publishedAt&apiKey=" + API_KEY;
+        String url = "https://newsapi.org/v2/everything?q=הפועל תל אביב&language=he&sortBy=publishedAt&pageSize=20&apiKey=" + API_KEY;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
+
                 response -> {
                     progressBar.setVisibility(View.GONE);
+
                     try {
                         JSONArray articles = response.getJSONArray("articles");
                         newsList.clear();
 
                         for (int i = 0; i < articles.length(); i++) {
+
                             JSONObject article = articles.getJSONObject(i);
+
+                            String title = article.optString("title");
+                            if (title == null || title.equals("")) continue;
+
                             newsList.add(new NewsItem(
-                                    article.optString("title"),
+                                    title,
                                     article.optString("description"),
                                     article.optString("url"),
                                     article.optString("urlToImage")
@@ -80,10 +76,12 @@ public class NewsActivity extends BaseActivity {
                         }
 
                         adapter.notifyDataSetChanged();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 },
+
                 error -> {
                     progressBar.setVisibility(View.GONE);
                     error.printStackTrace();

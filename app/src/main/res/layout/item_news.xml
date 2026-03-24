@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="18dp"
+
+    app:cardCornerRadius="20dp"
     app:cardElevation="6dp"
-    app:strokeColor="@color/red"
+    app:strokeColor="@color/red_main"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,23 +20,36 @@
             android:id="@+id/newsImage"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="8dp"/>
+            android:scaleType="centerCrop"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@color/red"
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/description"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/title"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:textColor="@color/red_main"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:layout_marginTop="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

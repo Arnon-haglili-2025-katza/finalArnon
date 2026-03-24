@@ -1,6 +1,7 @@
 package com.example.arnonfinalhta;
 
 public class NewsItem {
+
     private String title, description, url, urlToImage;
 
     public NewsItem(String title, String description, String url, String urlToImage) {

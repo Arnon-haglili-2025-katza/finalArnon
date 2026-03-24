@@ -34,13 +34,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
+
         NewsItem item = newsList.get(position);
+
         holder.title.setText(item.getTitle());
-        holder.description.setText(item.getDescription());
+        holder.description.setText(item.getDescription() != null ? item.getDescription() : "");
 
         Glide.with(context)
                 .load(item.getUrlToImage())
                 .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
                 .into(holder.image);
 
         holder.itemView.setOnClickListener(v -> {
@@ -55,11 +58,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     }
 
     static class NewsViewHolder extends RecyclerView.ViewHolder {
+
         TextView title, description;
         ImageView image;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
+
             title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
             image = itemView.findViewById(R.id.newsImage);

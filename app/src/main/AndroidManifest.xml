@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.arnonfinalhta">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,14 +16,15 @@
         android:theme="@style/Theme.Arnonfinalhta"
         tools:targetApi="31">
         <activity
+            android:name=".LeaderboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".NewsActivity"
             android:exported="false" />
         <activity
             android:name=".TriviaAiActivity"
             android:exported="false" />
-        <activity
-            android:name=".AiActivity"
-            android:exported="false" />
+
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />

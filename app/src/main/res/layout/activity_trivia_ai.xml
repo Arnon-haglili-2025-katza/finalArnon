@@ -1,38 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
 
-    <TextView
-        android:id="@+id/questionText"
-        android:text="לחץ 'שאלה חדשה' לקבלת שאלה"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
+    <!-- כרטיס ניקוד -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/scoreCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:layout_margin="12dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:strokeColor="@color/red_main"
+        app:strokeWidth="1dp"
 
-    <Button
-        android:id="@+id/option1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="checkAnswer"/>
-    <Button
-        android:id="@+id/option2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="checkAnswer"/>
-    <Button
-        android:id="@+id/option3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="checkAnswer"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:text="שאלה חדשה"
-        android:onClick="getNewQuestion"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/scoreText"
+            android:text="נקודות: 0"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/red_main"
+            android:padding="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <!-- כרטיס שאלה -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/questionCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
-</LinearLayout>
+        android:layout_margin="12dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="8dp"
+
+        app:layout_constraintTop_toBottomOf="@id/scoreCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/questionText"
+            android:text="טוען שאלה..."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <!-- תשובות -->
+    <LinearLayout
+        android:id="@+id/optionsLayout"
+        android:orientation="vertical"
+        android:layout_margin="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@id/questionCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/option1"
+            style="@style/TriviaButton"/>
+
+        <Button
+            android:id="@+id/option2"
+            style="@style/TriviaButton"/>
+
+        <Button
+            android:id="@+id/option3"
+            style="@style/TriviaButton"/>
+
+        <Button
+            android:id="@+id/btnLeaderboard"
+            android:text="🏆 טבלת דירוג"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/red_dark"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

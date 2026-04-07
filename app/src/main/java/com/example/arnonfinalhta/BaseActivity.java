@@ -24,8 +24,8 @@ public class BaseActivity extends AppCompatActivity {
             else if (id == R.id.nav_news && !(this instanceof NewsActivity))
                 startActivity(new Intent(this, NewsActivity.class));
 
-            else if (id == R.id.nav_ai && !(this instanceof AiActivity))
-                startActivity(new Intent(this, AiActivity.class));
+            else if (id == R.id.nav_trivia && !(this instanceof TriviaAiActivity))
+                startActivity(new Intent(this, TriviaAiActivity.class));
 
             else if (id == R.id.nav_profile && !(this instanceof ProfileActivity))
                 startActivity(new Intent(this, ProfileActivity.class));

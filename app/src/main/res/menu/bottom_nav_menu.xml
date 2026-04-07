@@ -16,9 +16,9 @@
       />
 
     <item
-        android:id="@+id/nav_ai"
-        android:title="AI"
-        android:icon="@drawable/ic_ai"/>
+        android:id="@+id/nav_trivia"
+        android:title="טריוויה"
+        android:icon="@drawable/ic_trivia"/>
 
     <item
         android:id="@+id/nav_profile"

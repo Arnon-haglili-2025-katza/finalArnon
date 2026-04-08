@@ -14,36 +14,35 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
-    Context context;
-    List<NewsItem> newsList;
+    private Context context;
+    private List<NewsItem> list;
 
-    public NewsAdapter(Context context, List<NewsItem> newsList) {
+    public NewsAdapter(Context context, List<NewsItem> list) {
         this.context = context;
-        this.newsList = newsList;
+        this.list = list;
     }
 
     @NonNull
     @Override
-    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_news, parent, false);
-        return new NewsViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        NewsItem item = newsList.get(position);
+        NewsItem item = list.get(position);
 
         holder.title.setText(item.getTitle());
-        holder.description.setText(item.getDescription() != null ? item.getDescription() : "");
+        holder.description.setText(item.getDescription());
 
         Glide.with(context)
                 .load(item.getUrlToImage())
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
+                .centerCrop()
                 .into(holder.image);
 
         holder.itemView.setOnClickListener(v -> {
@@ -54,15 +53,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public int getItemCount() {
-        return newsList.size();
+        return list.size();
     }
 
-    static class NewsViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView title, description;
         ImageView image;
 
-        public NewsViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.title);

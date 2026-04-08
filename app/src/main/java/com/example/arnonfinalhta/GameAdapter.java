@@ -43,14 +43,19 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         holder.dateTime.setText(game.date + " | " + game.time);
         holder.score.setText(game.score);
 
-        // צבע לפי תוצאה
-        if (game.score.equals("TBD")) {
-            holder.score.setTextColor(0xFF888888);
-        } else if (game.score.startsWith("2") || game.score.startsWith("3")) {
-            holder.score.setTextColor(0xFF2E7D32); // ירוק (ניצחון לדוגמה)
-        } else {
-            holder.score.setTextColor(0xFFC62828); // אדום
-        }
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(
+                    v.getContext(),
+                    GameDetailsActivity.class
+            );
+
+            intent.putExtra("opponent", game.opponent);
+            intent.putExtra("date", game.date);
+            intent.putExtra("time", game.time);
+            intent.putExtra("score", game.score);
+
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

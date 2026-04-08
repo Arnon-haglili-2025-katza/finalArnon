@@ -18,8 +18,8 @@ public class BaseActivity extends AppCompatActivity {
             if (id == R.id.nav_home && !(this instanceof MainActivity))
                 startActivity(new Intent(this, MainActivity.class));
 
-            else if (id == R.id.nav_matches && !(this instanceof MatchesActivity))
-                startActivity(new Intent(this, MatchesActivity.class));
+            else if (id == R.id.nav_table && !(this instanceof LeagueTableActivity))
+                startActivity(new Intent(this, LeagueTableActivity.class));
 
             else if (id == R.id.nav_news && !(this instanceof NewsActivity))
                 startActivity(new Intent(this, NewsActivity.class));

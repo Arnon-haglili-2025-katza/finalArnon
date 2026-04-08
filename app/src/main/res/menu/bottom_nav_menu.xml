@@ -6,9 +6,9 @@
         android:icon="@drawable/ic_home"/>
 
     <item
-        android:id="@+id/nav_matches"
-        android:title="משחקים"
-        android:icon="@drawable/ic_sports_soccer"/>
+        android:id="@+id/nav_table"
+        android:title="טבלה"
+        android:icon="@android:drawable/ic_menu_sort_by_size"/>
 
     <item
         android:id="@+id/nav_news"

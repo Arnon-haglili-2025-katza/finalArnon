@@ -1,6 +1,8 @@
 package com.example.arnonfinalhta;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,11 +18,16 @@ public class LeagueTableActivity extends BaseActivity {
 
         setContentView(R.layout.layout_with_bottom_nav);
 
-        android.view.View view = getLayoutInflater().inflate(
+        FrameLayout container = findViewById(R.id.content_container);
+
+        View view = getLayoutInflater().inflate(
                 R.layout.activity_league_table,
-                findViewById(R.id.content_container),
-                true
+                container,
+                false
         );
+
+        container.removeAllViews();
+        container.addView(view);
 
         setupBottomNav(R.id.nav_table);
 

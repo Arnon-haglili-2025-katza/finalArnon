@@ -1,6 +1,8 @@
 package com.example.arnonfinalhta;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,11 +19,16 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.layout_with_bottom_nav);
 
-        android.view.View contentView = getLayoutInflater().inflate(
+        FrameLayout container = findViewById(R.id.content_container);
+
+        View contentView = getLayoutInflater().inflate(
                 R.layout.activity_main,
-                findViewById(R.id.content_container),
-                true
+                container,
+                false
         );
+
+        container.removeAllViews();
+        container.addView(contentView);
 
         setupBottomNav(R.id.nav_home);
 

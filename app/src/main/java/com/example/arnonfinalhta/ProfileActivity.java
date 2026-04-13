@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,13 +25,18 @@ public class ProfileActivity extends BaseActivity {
 
         setContentView(R.layout.layout_with_bottom_nav);
 
+        FrameLayout container = findViewById(R.id.content_container);
+
         View contentView = getLayoutInflater().inflate(
                 R.layout.activity_profile,
-                findViewById(R.id.content_container),
-                true
+                container,
+                false
         );
 
-        // חשוב: למצוא את ה-views מתוך ה-contentView
+        container.removeAllViews();
+        container.addView(contentView);
+
+        setupBottomNav(R.id.nav_profile);
         tvWelcome = contentView.findViewById(R.id.tvWelcome);
         tvEmail = contentView.findViewById(R.id.tvEmail);
         tvGender = contentView.findViewById(R.id.tvGender);

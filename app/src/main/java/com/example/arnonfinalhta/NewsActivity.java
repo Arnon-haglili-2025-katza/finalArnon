@@ -55,8 +55,7 @@ public class NewsActivity extends BaseActivity {
 
         swipeRefresh.setRefreshing(true);
 
-        String url = "https://gnews.io/api/v4/search?q=Hapoel Tel Aviv&lang=en&max=10&apikey=" + API_KEY;
-
+        String url = "https://gnews.io/api/v4/search?q=football&lang=en&max=10&apikey=" + API_KEY;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,

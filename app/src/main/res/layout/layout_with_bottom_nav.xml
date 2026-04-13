@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray">
 
-    <!-- תוכן עליון -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/content_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -22,16 +21,14 @@
 
 
 
-        <!-- ⚠️ חשוב: RecyclerView לבד, בלי weight -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerNews"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
-    <!-- תפריט תחתון -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"

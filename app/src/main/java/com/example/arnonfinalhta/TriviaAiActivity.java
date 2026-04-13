@@ -42,8 +42,15 @@ public class TriviaAiActivity extends BaseActivity {
 
         setContentView(R.layout.layout_with_bottom_nav);
 
-        LinearLayout container = findViewById(R.id.content_container);
-        View view = getLayoutInflater().inflate(R.layout.activity_trivia_ai, container, false);
+        FrameLayout container = findViewById(R.id.content_container);
+
+        View view = getLayoutInflater().inflate(
+                R.layout.activity_trivia_ai,
+                container,
+                false
+        );
+
+        container.removeAllViews();
         container.addView(view);
 
         setupBottomNav(R.id.nav_trivia);

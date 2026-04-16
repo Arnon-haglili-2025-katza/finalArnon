@@ -2,7 +2,7 @@ package com.example.arnonfinalhta;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,12 +24,13 @@ public class LeaderboardActivity extends BaseActivity {
 
         setContentView(R.layout.layout_with_bottom_nav);
 
-        // 👉 מכניס את הלייאאוט של הטבלה
-        LinearLayout container = findViewById(R.id.content_container);
+        FrameLayout container = findViewById(R.id.content_container);
         View view = getLayoutInflater().inflate(R.layout.activity_leaderboard, container, false);
+
+        container.removeAllViews();
         container.addView(view);
 
-        setupBottomNav(R.id.nav_profile);
+        setupBottomNav(R.id.nav_leaderboard);
 
         recyclerView = view.findViewById(R.id.recyclerLeaderboard);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -44,8 +45,7 @@ public class LeaderboardActivity extends BaseActivity {
 
         FirebaseDatabase.getInstance()
                 .getReference("users")
-                .orderByChild("score")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -53,12 +53,16 @@ public class LeaderboardActivity extends BaseActivity {
                         userList.clear();
 
                         for (DataSnapshot data : snapshot.getChildren()) {
-                            User user = data.getValue(User.class);
-                            if (user != null)
-                                userList.add(user);
+
+                            String email = data.child("email").getValue(String.class);
+                            Long scoreLong = data.child("score").getValue(Long.class);
+
+                            int score = scoreLong != null ? scoreLong.intValue() : 0;
+
+                            userList.add(new User(email, score));
                         }
 
-                        Collections.reverse(userList);
+                        Collections.sort(userList, (a, b) -> b.score - a.score);
                         adapter.notifyDataSetChanged();
                     }
 

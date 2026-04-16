@@ -10,6 +10,7 @@ import android.widget.*;
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
@@ -82,42 +83,62 @@ public class TriviaAiActivity extends BaseActivity {
         nextQuestion();
     }
 
+
     private void updateScore() {
         scoreText.setText("נקודות: " + score);
     }
 
     private void saveScore() {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
 
-        FirebaseDatabase.getInstance()
+        if (auth.getCurrentUser() == null) {
+            Toast.makeText(this, "אין משתמש מחובר", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String uid = auth.getCurrentUser().getUid();
+        String email = auth.getCurrentUser().getEmail();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("users")
-                .child(userId)
-                .child("score")
-                .setValue(score);
+                .child(uid);
+
+        ref.child("score").setValue(score);
+        ref.child("email").setValue(email);
+
+        ref.child("score").setValue(score)
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(this, "נשמר בהצלחה ✔", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "שגיאה: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
     }
+
 
     private void initQuestions() {
 
-        questionBank.add(new TriviaQuestion(
-                "באיזה שנה נוסדה הפועל תל אביב?",
-                new String[]{"1900", "1923", "1935"},
-                1
-        ));
+        questionBank.add(new TriviaQuestion("באיזה שנה נוסדה הפועל תל אביב?",
+                new String[]{"1900", "1923", "1935"}, 1));
 
-        questionBank.add(new TriviaQuestion(
-                "איזה צבעים מייצגים את הפועל תל אביב?",
-                new String[]{"אדום ולבן", "צהוב וכחול", "ירוק"},
-                0
-        ));
+        questionBank.add(new TriviaQuestion("איזה צבעים מייצגים את הפועל?",
+                new String[]{"אדום ולבן", "צהוב וכחול", "ירוק"}, 0));
 
-        questionBank.add(new TriviaQuestion(
-                "באיזה אצטדיון משחקת הפועל תל אביב?",
-                new String[]{"טדי", "בלומפילד", "סמי עופר"},
-                1
-        ));
+        questionBank.add(new TriviaQuestion("איפה משחקת הפועל?",
+                new String[]{"טדי", "בלומפילד", "סמי עופר"}, 1));
+
+        questionBank.add(new TriviaQuestion("כמה אליפויות יש להפועל?",
+                new String[]{"5", "13", "20"}, 1));
+
+        questionBank.add(new TriviaQuestion("איזה קבוצה יריבה של הפועל?",
+                new String[]{"מכבי תל אביב", "בית\"ר", "חיפה"}, 0));
+
+        questionBank.add(new TriviaQuestion("איזה צבע לא שייך להפועל?",
+                new String[]{"אדום", "לבן", "צהוב"}, 2));
     }
+
+
 
     private void nextQuestion() {
 
@@ -128,18 +149,23 @@ public class TriviaAiActivity extends BaseActivity {
 
         currentQuestion++;
 
-        if (Math.random() < 0.7) {
-            loadLocalQuestion();
-        } else {
+        if (queue != null && Math.random() < 0.5) {
             getNewQuestionFromAI();
+        } else {
+            loadLocalQuestion();
         }
     }
 
     private void loadLocalQuestion() {
+
+        if (questionBank.isEmpty()) return;
+
         int index = new Random().nextInt(questionBank.size());
         currentQ = questionBank.get(index);
+
         showQuestion();
     }
+
 
     private void getNewQuestionFromAI() {
 
@@ -166,6 +192,7 @@ public class TriviaAiActivity extends BaseActivity {
 
                     response -> {
                         try {
+
                             String content = response
                                     .getJSONArray("choices")
                                     .getJSONObject(0)
@@ -209,7 +236,11 @@ public class TriviaAiActivity extends BaseActivity {
         }
     }
 
+
     private void showQuestion() {
+
+        if (currentQ == null) return;
+
         resetButtons();
 
         questionText.setText(currentQ.question);
@@ -222,7 +253,7 @@ public class TriviaAiActivity extends BaseActivity {
 
     public void checkAnswer(View view) {
 
-        if (isAnswered) return;
+        if (isAnswered || currentQ == null) return;
         isAnswered = true;
 
         Button btn = (Button) view;
@@ -251,9 +282,9 @@ public class TriviaAiActivity extends BaseActivity {
 
         updateScore();
 
-        new Handler().postDelayed(() -> {
-            nextQuestion();
-        }, 1200);
+        saveScore();
+
+        new Handler().postDelayed(this::nextQuestion, 1200);
     }
 
     private void animateButton(Button btn, boolean correct) {

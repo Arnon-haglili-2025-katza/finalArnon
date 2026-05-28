@@ -1,6 +1,8 @@
 package com.example.arnonfinalhta;
 
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
 
-    List<User> users;
+    private final List<User> users;
 
     public LeaderboardAdapter(List<User> users) {
         this.users = users;
@@ -31,15 +33,19 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
 
         User user = users.get(position);
 
-        String email = user.getEmail() != null ? user.getEmail() : "לא ידוע";
+        String email = user.name != null ? user.name : "משתמש";
 
-        holder.email.setText(email);
-        holder.score.setText("נקודות: " + user.getScore());
+        if (position == 0) {
+            holder.email.setText("🥇 " + email);
+        } else if (position == 1) {
+            holder.email.setText("🥈 " + email);
+        } else if (position == 2) {
+            holder.email.setText("🥉 " + email);
+        } else {
+            holder.email.setText((position + 1) + ". " + email);
+        }
 
-        // טופ 3
-        if (position == 0) holder.email.setText("🥇 " + email);
-        if (position == 1) holder.email.setText("🥈 " + email);
-        if (position == 2) holder.email.setText("🥉 " + email);
+        holder.score.setText(user.score + " נק'");
     }
 
     @Override
@@ -54,7 +60,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            email = itemView.findViewById(R.id.etEmail);
+            email = itemView.findViewById(R.id.email);
             score = itemView.findViewById(R.id.score);
         }
     }

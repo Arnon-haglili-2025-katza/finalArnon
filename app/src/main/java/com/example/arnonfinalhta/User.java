@@ -2,13 +2,14 @@ package com.example.arnonfinalhta;
 
 public class User {
 
-    public String email;
+    public String name;
     public int score;
 
-    public User() {}
+    public User() {
+    }
 
-    public User(String email, int score) {
-        this.email = email;
+    public User(String name, int score) {
+        this.name = name;
         this.score = score;
     }
 }

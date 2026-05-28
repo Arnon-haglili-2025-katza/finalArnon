@@ -3,6 +3,7 @@ package com.example.arnonfinalhta;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,12 +26,17 @@ public class LeaderboardActivity extends BaseActivity {
         setContentView(R.layout.layout_with_bottom_nav);
 
         FrameLayout container = findViewById(R.id.content_container);
-        View view = getLayoutInflater().inflate(R.layout.activity_leaderboard, container, false);
+
+        View view = getLayoutInflater().inflate(
+                R.layout.activity_leaderboard,
+                container,
+                false
+        );
 
         container.removeAllViews();
         container.addView(view);
 
-        setupBottomNav(R.id.nav_leaderboard);
+        setupBottomNav(R.id.nav_trivia);
 
         recyclerView = view.findViewById(R.id.recyclerLeaderboard);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,19 +61,36 @@ public class LeaderboardActivity extends BaseActivity {
                         for (DataSnapshot data : snapshot.getChildren()) {
 
                             String email = data.child("email").getValue(String.class);
-                            Long scoreLong = data.child("score").getValue(Long.class);
 
+                            if (email == null) {
+                                email = "משתמש";
+                            }
+
+                            Long scoreLong = data.child("score").getValue(Long.class);
                             int score = scoreLong != null ? scoreLong.intValue() : 0;
 
                             userList.add(new User(email, score));
                         }
 
                         Collections.sort(userList, (a, b) -> b.score - a.score);
+
                         adapter.notifyDataSetChanged();
+
+                        Toast.makeText(
+                                LeaderboardActivity.this,
+                                "נטענו " + userList.size() + " משתמשים",
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError error) {}
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(
+                                LeaderboardActivity.this,
+                                error.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
                 });
     }
 }

@@ -1,14 +1,43 @@
 package com.example.arnonfinalhta;
 
 import android.content.Intent;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class BaseActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // 🎵 מפעיל מוזיקה בכל האפליקציה
+        MusicManager.startMusic(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        MusicManager.resumeMusic();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        MusicManager.pauseMusic();
+    }
 
     protected void setupBottomNav(int selectedItemId) {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+        if (bottomNav == null)
+            return;
+
         bottomNav.setSelectedItemId(selectedItemId);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -30,7 +59,8 @@ public class BaseActivity extends AppCompatActivity {
             else if (id == R.id.nav_profile && !(this instanceof ProfileActivity))
                 startActivity(new Intent(this, ProfileActivity.class));
 
-            overridePendingTransition(0,0);
+            overridePendingTransition(0, 0);
+
             return true;
         });
     }

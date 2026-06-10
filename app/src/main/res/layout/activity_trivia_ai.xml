@@ -25,12 +25,12 @@
             android:id="@+id/scoreText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="נקודות: 0"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/red_main"
             android:gravity="center"
-            android:padding="18dp"/>
+            android:padding="18dp"
+            android:text="נקודות: 0"
+            android:textColor="@color/red_main"
+            android:textSize="22sp"
+            android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
 

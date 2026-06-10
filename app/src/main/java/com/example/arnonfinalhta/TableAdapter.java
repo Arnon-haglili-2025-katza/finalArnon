@@ -5,9 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.TableViewHolder> {
@@ -34,6 +32,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.TableViewHol
     public TableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_table, parent, false);
+
         return new TableViewHolder(view);
     }
 
@@ -46,13 +45,18 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.TableViewHol
         holder.points.setText(String.valueOf(t.points));
         holder.goalDiff.setText((t.goalDiff > 0 ? "+" : "") + t.goalDiff);
 
-        // 🔴 הדגשת הפועל ת״א
-        if (t.name.equals("הפועל תל אביב")) {
+        // איפוס צבעים כדי שלא יידבקו משורות אחרות בגלל RecyclerView
+        holder.itemView.setBackgroundColor(Color.WHITE);
+        holder.team.setTextColor(Color.BLACK);
+        holder.position.setTextColor(Color.BLACK);
+
+        // 🔴 הדגשת הפועל תל אביב
+        if (t.name != null && t.name.equals("הפועל תל אביב")) {
             holder.itemView.setBackgroundColor(Color.parseColor("#FFEBEE"));
             holder.team.setTextColor(Color.parseColor("#C62828"));
         }
 
-        // 🟢 טופ 3
+        // 🟢 הדגשת טופ 3
         if (t.position <= 3) {
             holder.position.setTextColor(Color.parseColor("#2E7D32"));
         }

@@ -1,20 +1,59 @@
 package com.example.arnonfinalhta;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class BaseActivity extends AppCompatActivity {
 
+    private NetworkChangeReceiver networkReceiver;
+    private AlertDialog noInternetDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 🎵 מפעיל מוזיקה בכל האפליקציה
         MusicManager.startMusic(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        networkReceiver = new NetworkChangeReceiver(isConnected -> {
+            if (isConnected) {
+                hideNoInternetDialog();
+            } else {
+                showNoInternetDialog();
+            }
+        });
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver, filter);
+
+        if (!NetworkChangeReceiver.isInternetAvailable(this)) {
+            showNoInternetDialog();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (networkReceiver != null) {
+            try {
+                unregisterReceiver(networkReceiver);
+            } catch (Exception ignored) {
+            }
+
+            networkReceiver = null;
+        }
     }
 
     @Override
@@ -22,6 +61,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
 
         MusicManager.resumeMusic();
+
+        if (!NetworkChangeReceiver.isInternetAvailable(this)) {
+            showNoInternetDialog();
+        }
     }
 
     @Override
@@ -29,6 +72,43 @@ public class BaseActivity extends AppCompatActivity {
         super.onPause();
 
         MusicManager.pauseMusic();
+    }
+
+    private void showNoInternetDialog() {
+
+        if (isFinishing()) return;
+
+        if (noInternetDialog != null && noInternetDialog.isShowing()) {
+            return;
+        }
+
+        noInternetDialog = new AlertDialog.Builder(this)
+                .setTitle("אין חיבור לאינטרנט")
+                .setMessage("האפליקציה דורשת חיבור לאינטרנט כדי לעבוד. בדוק את החיבור לרשת ונסה שוב.")
+                .setCancelable(false)
+                .setPositiveButton("נסה שוב", null)
+                .create();
+
+        noInternetDialog.setOnShowListener(dialog -> {
+            noInternetDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setOnClickListener(v -> {
+                        if (NetworkChangeReceiver.isInternetAvailable(this)) {
+                            hideNoInternetDialog();
+                        } else {
+                            noInternetDialog.setMessage(
+                                    "עדיין אין חיבור לאינטרנט. בדוק Wi-Fi או נתונים סלולריים ונסה שוב."
+                            );
+                        }
+                    });
+        });
+
+        noInternetDialog.show();
+    }
+
+    private void hideNoInternetDialog() {
+        if (noInternetDialog != null && noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+        }
     }
 
     protected void setupBottomNav(int selectedItemId) {

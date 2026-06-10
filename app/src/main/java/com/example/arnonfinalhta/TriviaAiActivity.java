@@ -5,17 +5,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.*;
 
-import com.android.volley.*;
-import com.android.volley.toolbox.*;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -31,6 +29,7 @@ public class TriviaAiActivity extends BaseActivity {
     int totalQuestions = 10;
 
     boolean isAnswered = false;
+    boolean isActivityActive = true;
 
     TriviaQuestion currentQ;
 
@@ -41,6 +40,8 @@ public class TriviaAiActivity extends BaseActivity {
 
     CountDownTimer countDownTimer;
     int timeLeft = 30;
+
+    Handler gameHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +95,27 @@ public class TriviaAiActivity extends BaseActivity {
         scoreText.setText("נקודות: " + score);
     }
 
-    private void startTimer() {
+    private void initQuestions() {
+        questionBank.clear();
+        questionBank.addAll(TriviaQuestionBank.getQuestions());
+    }
 
+    private void stopGameTimers() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
+            countDownTimer = null;
         }
+
+        if (gameHandler != null) {
+            gameHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private void startTimer() {
+
+        stopGameTimers();
+
+        if (!isActivityActive) return;
 
         timeLeft = 30;
         timerProgress.setMax(30);
@@ -106,8 +123,15 @@ public class TriviaAiActivity extends BaseActivity {
         timerText.setText("⏳ זמן: 30");
 
         countDownTimer = new CountDownTimer(30000, 1000) {
+
             @Override
             public void onTick(long millisUntilFinished) {
+
+                if (!isActivityActive) {
+                    cancel();
+                    return;
+                }
+
                 timeLeft--;
                 timerText.setText("⏳ זמן: " + timeLeft);
                 timerProgress.setProgress(timeLeft);
@@ -115,6 +139,9 @@ public class TriviaAiActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
+
+                if (!isActivityActive) return;
+
                 if (!isAnswered) {
                     isAnswered = true;
 
@@ -124,10 +151,11 @@ public class TriviaAiActivity extends BaseActivity {
                             Toast.LENGTH_SHORT
                     ).show();
 
-                    new Handler().postDelayed(
-                            TriviaAiActivity.this::nextQuestion,
-                            1000
-                    );
+                    gameHandler.postDelayed(() -> {
+                        if (isActivityActive) {
+                            nextQuestion();
+                        }
+                    }, 1000);
                 }
             }
         };
@@ -152,28 +180,9 @@ public class TriviaAiActivity extends BaseActivity {
         ref.child("email").setValue(email);
     }
 
-    private void initQuestions() {
-
-        questionBank.add(new TriviaQuestion("באיזה שנה נוסדה הפועל תל אביב?",
-                new String[]{"1900", "1923", "1935"}, 1));
-
-        questionBank.add(new TriviaQuestion("איזה צבעים מייצגים את הפועל?",
-                new String[]{"אדום ולבן", "צהוב וכחול", "ירוק"}, 0));
-
-        questionBank.add(new TriviaQuestion("איפה משחקת הפועל?",
-                new String[]{"טדי", "בלומפילד", "סמי עופר"}, 1));
-
-        questionBank.add(new TriviaQuestion("כמה אליפויות יש להפועל?",
-                new String[]{"5", "13", "20"}, 1));
-
-        questionBank.add(new TriviaQuestion("איזה קבוצה יריבה של הפועל?",
-                new String[]{"מכבי תל אביב", "בית\"ר", "חיפה"}, 0));
-
-        questionBank.add(new TriviaQuestion("איזה צבע לא שייך להפועל?",
-                new String[]{"אדום", "לבן", "צהוב"}, 2));
-    }
-
     private void nextQuestion() {
+
+        if (!isActivityActive) return;
 
         if (currentQuestion >= totalQuestions) {
             endGame();
@@ -191,8 +200,17 @@ public class TriviaAiActivity extends BaseActivity {
 
     private void loadLocalQuestion() {
 
+        if (!isActivityActive) return;
+
+        if (questionBank.isEmpty()) {
+            initQuestions();
+        }
+
+        if (questionBank.isEmpty()) return;
+
         int index = new Random().nextInt(questionBank.size());
-        currentQ = questionBank.get(index);
+
+        currentQ = questionBank.remove(index);
 
         showQuestion();
     }
@@ -202,6 +220,9 @@ public class TriviaAiActivity extends BaseActivity {
     }
 
     private void showQuestion() {
+
+        if (!isActivityActive) return;
+        if (currentQ == null) return;
 
         resetButtons();
 
@@ -217,33 +238,43 @@ public class TriviaAiActivity extends BaseActivity {
 
     public void checkAnswer(View view) {
 
+        if (!isActivityActive) return;
         if (isAnswered) return;
+        if (currentQ == null) return;
+
         isAnswered = true;
 
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        stopGameTimers();
 
         Button btn = (Button) view;
 
         int selected = -1;
+
         if (btn == option1) selected = 0;
         if (btn == option2) selected = 1;
         if (btn == option3) selected = 2;
 
         Button correctBtn = option1;
+
         if (currentQ.correctIndex == 1) correctBtn = option2;
         if (currentQ.correctIndex == 2) correctBtn = option3;
 
         if (selected == currentQ.correctIndex) {
 
             score += 10;
-            correctSound.start();
+
+            if (correctSound != null) {
+                correctSound.start();
+            }
+
             animateButton(btn, true);
 
         } else {
 
-            wrongSound.start();
+            if (wrongSound != null) {
+                wrongSound.start();
+            }
+
             animateButton(btn, false);
             animateButton(correctBtn, true);
         }
@@ -251,7 +282,11 @@ public class TriviaAiActivity extends BaseActivity {
         updateScore();
         saveScore();
 
-        new Handler().postDelayed(this::nextQuestion, 1200);
+        gameHandler.postDelayed(() -> {
+            if (isActivityActive) {
+                nextQuestion();
+            }
+        }, 1200);
     }
 
     private void animateButton(Button btn, boolean correct) {
@@ -268,31 +303,72 @@ public class TriviaAiActivity extends BaseActivity {
         int defaultColor = getColor(R.color.red_main);
 
         option1.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(defaultColor));
+                android.content.res.ColorStateList.valueOf(defaultColor)
+        );
 
         option2.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(defaultColor));
+                android.content.res.ColorStateList.valueOf(defaultColor)
+        );
 
         option3.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(defaultColor));
+                android.content.res.ColorStateList.valueOf(defaultColor)
+        );
     }
 
     private void endGame() {
 
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        if (!isActivityActive) return;
+
+        stopGameTimers();
 
         saveScore();
 
-        Toast.makeText(this,
+        Toast.makeText(
+                this,
                 "🏆 סיימת! ניקוד: " + score,
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_LONG
+        ).show();
 
         score = 0;
         currentQuestion = 0;
 
+        initQuestions();
         updateScore();
-        nextQuestion();
+
+        if (isActivityActive) {
+            nextQuestion();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isActivityActive = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        isActivityActive = false;
+        stopGameTimers();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        isActivityActive = false;
+        stopGameTimers();
+
+        if (correctSound != null) {
+            correctSound.release();
+            correctSound = null;
+        }
+
+        if (wrongSound != null) {
+            wrongSound.release();
+            wrongSound = null;
+        }
     }
 }

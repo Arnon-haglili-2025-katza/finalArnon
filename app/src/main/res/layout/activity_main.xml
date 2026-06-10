@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/light_gray">
+
+    <TextView
+        android:id="@+id/tvPageTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="משחקים"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/red_main"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/upcomingCard"
@@ -12,7 +29,9 @@
         android:layout_margin="12dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/red_main"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPageTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -20,44 +39,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@color/white">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="המשחק הקרוב"
-                android:textStyle="bold"
+                android:textColor="@color/red_main"
                 android:textSize="16sp"
-                android:textColor="#D32F2F"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvNextOpponent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="הפועל ת״א נגד מכבי תל אביב"
+                android:layout_marginTop="8dp"
+                android:text="טוען משחק קרוב..."
+                android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvNextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25/04 | 21:00"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/btnAddGame"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="➕ הוסף משחק"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:backgroundTint="@color/red_main"
+        android:visibility="gone"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/upcomingCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerGames"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/upcomingCard"
+        app:layout_constraintTop_toBottomOf="@id/btnAddGame"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

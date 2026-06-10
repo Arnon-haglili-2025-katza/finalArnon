@@ -6,6 +6,9 @@ public class Team {
     public int points;
     public int goalDiff;
 
+    public Team() {
+    }
+
     public Team(int position, String name, int points, int goalDiff) {
         this.position = position;
         this.name = name;

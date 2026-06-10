@@ -6,6 +6,9 @@ public class Game {
     public String time;
     public String score;
 
+    public Game() {
+    }
+
     public Game(String opponent, String date, String time, String score) {
         this.opponent = opponent;
         this.date = date;
